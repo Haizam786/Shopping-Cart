@@ -40,3 +40,11 @@ Route::patch('update-cart', 'App\Http\Controllers\ItemsController@update');
 
 Route::delete('remove-from-cart', 'App\Http\Controllers\ItemsController@remove');
 
+Route::get('stripe/{total}', 'App\Http\Controllers\ItemsController@stripe');
+
+// Route::controller(ItemsController::class)->group(function(){
+//    Route::get('stripe', 'stripe');
+//    Route::post('stripe', 'stripePost')->name('stripe.post');
+// });
+
+Route::post('stripe/{total}', 'App\Http\Controllers\ItemsController@stripePost')->name('stripe.post');

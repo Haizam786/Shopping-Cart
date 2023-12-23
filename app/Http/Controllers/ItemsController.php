@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
+use App\Models\Order;
+use Session;
+use Stripe;
 
 
 /*class ItemsController extends Controller
@@ -228,6 +231,54 @@ class ItemsController extends Controller
         }
 
         return number_format($total, 2);
+    }
+
+    public function stripe($total)
+    {
+
+
+        return view('stripe',compact('total'));
+    }
+
+    public function stripePost(Request $request, $total)
+    {
+        
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+    
+        Stripe\Charge::create ([
+                "amount" => $total * 100,
+                "currency" => "usd",
+                "source" => $request->stripeToken,
+                "description" => "Thanks for your payment!" 
+        ]);
+
+         $data=Item::get();
+        foreach($data as $data)
+         {
+             $order=new order;
+             $order->name=$data->name;
+             $order->photo=$data->photo;
+             $order->price=$data->price;
+             $order->payment_status="Success";
+
+             $order->save();
+
+        //     $item_id=$data->id;
+        //     $item=item::find('item_id');
+        //     $item->delete();
+
+            // $itemId = $itemdata->id;
+            // $item = Item::find($itemId);
+
+            // if ($item) {
+            //     $item->delete();
+         }
+    
+        //Session::flash('success', 'Payment successful!');
+       session()->flash('success', 'Payment successful!');
+
+              
+        return back();
     }
 }
 
